@@ -2,34 +2,57 @@ new Vue({
   el: "#app",
   data: {
     showStart: true,
-    myHealth: 80,
-    monsterHealth: 80,
+    myHealth: 100,
+    monsterHealth: 100,
     myAttackPw: 0,
-    monsterAttackPw: 0
+    monsterAttackPw: 0,
+    attackVector: []
   },
   methods: {
     attack: function() {
-      this.myAttackPw = Math.random() * 9;
-      this.monsterAttackPw = Math.random() * 5;
-      this.myHealth = this.myHealth - this.monsterAttackPw;
-      this.monsterHealth = this.monsterHealth - this.myAttackPw;
+      this.myAttackPw = Math.floor(Math.random() * 5);
+      this.monsterAttackPw = Math.floor(Math.random() * 2);
+      this.myHealth =
+        this.monsterAttackPw < this.myHealth
+          ? this.myHealth - this.monsterAttackPw
+          : 0;
+      this.monsterHealth =
+        this.myAttackPw < this.monsterHealth
+          ? this.monsterHealth - this.myAttackPw
+          : 0;
+      //updates the attack vector
+      this.attackVector.unshift("You hit " + this.myAttackPw);
+      this.attackVector.unshift("Monster hit " + this.monsterAttackPw);
     },
     powerAttack: function() {
-      this.myAttackPw = Math.random() * 10;
-      this.monsterAttackPw = Math.random() * 7;
-      this.myHealth = this.myHealth - this.monsterAttackPw;
-      this.monsterHealth = this.monsterHealth - this.myAttackPw;
+      this.myAttackPw = Math.floor(Math.random() * 10);
+      this.monsterAttackPw = Math.floor(Math.random() * 2);
+      this.myHealth =
+        this.monsterAttackPw < this.myHealth
+          ? this.myHealth - this.monsterAttackPw
+          : 0;
+      this.monsterHealth =
+        this.myAttackPw < this.monsterHealth
+          ? this.monsterHealth - this.myAttackPw
+          : 0;
+      //updates the attack vector
+      this.attackVector.unshift("You hit " + this.myAttackPw);
+      this.attackVector.unshift("Monster hit " + this.monsterAttackPw);
     },
     heal: function() {
-      var power = Math.random() * 10;
-      this.myHealth = this.myHealth + power;
-      power = Math.random() * 7;
-      this.myHealth = this.myHealth - power;
+      if (this.myHealth != 100) {
+        var power = Math.floor(Math.random() * 10);
+        this.myHealth =
+          this.myHealth + power <= 100 ? this.myHealth + power : 100;
+        power = Math.floor(Math.random() * 2);
+        this.myHealth = this.myHealth - power;
+      }
     },
     giveup: function() {
-      this.myHealth = 80;
-      this.monsterHealth = 80;
-      showStart = true;
+      this.myHealth = 100;
+      this.monsterHealth = 100;
+      this.showStart = true;
+      this.attackVector = [];
     }
   },
   computed: {
@@ -42,6 +65,18 @@ new Vue({
       return {
         width: this.monsterHealth + "%"
       };
+    }
+  },
+  watch: {
+    myHealth: function() {
+      if (this.myHealth === 0) {
+        alert("You have been killed!");
+      }
+    },
+    monsterHealth: function() {
+      if (this.monsterHealth === 0) {
+        alert("You win!");
+      }
     }
   }
 });
